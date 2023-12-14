@@ -9,7 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"]
-    var correctAnswer = Int.random(in: 0...2)
+    @State private var correctAnswer = Int.random(in: 0...2)
+    @State private var isAlertVisible : Bool = false
+    @State private var score : Int = 0
+    @State private var tappedFlag : String = ""
+    @State private var isCorrect : Bool = false
+    @State private var randomFlags : Array = [2, 5, 9]
     
     var body: some View {
         ZStack {
@@ -20,14 +25,25 @@ struct ContentView: View {
                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                     .foregroundStyle(.white)
                 
-                ForEach(0 ..< 3) { number in
+                ForEach(randomFlags, id: \.self) { flag in
                     Button {
-                        // flag wa tapped
+                        isAlertVisible = true
+                        tappedFlag = countries[flag]
+                        aFlagWasTapped(correctFlag: countries[correctAnswer])
                     } label: {
-                        Image(countries[number].lowercased())
+                        Image(countries[flag].lowercased())
                     }
                 }
-            }
+            }.alert("Alert", isPresented: $isAlertVisible, actions: {
+                
+            }, message: {
+                VStack {
+                    isCorrect ?  Text("You're right! This is the flag of \(countries[correctAnswer])") :  Text("Nope! You tapped: \(tappedFlag).")
+                    
+                   
+                }
+               
+            })
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.gray.gradient)
@@ -36,8 +52,20 @@ struct ContentView: View {
         
         
     }
-    func executeDelete() {
-            print("Now deleting…")
+    func aFlagWasTapped(correctFlag: String) {
+        let countriesArrayLenght : Int = countries.count
+        let randomFlag1 = Int.random(in: 0 ..< countriesArrayLenght - 1)
+        let randomFlag2 = Int.random(in: 0 ..< countriesArrayLenght - 1)
+        let randomFlag3 = Int.random(in: 0 ..< countriesArrayLenght - 1)
+        let randomArray = [randomFlag1, randomFlag2, randomFlag3]
+        randomFlags = randomArray
+        correctAnswer = randomFlags[Int.random(in: 0 ..< 3)]
+        if(correctFlag == tappedFlag){
+            isCorrect = true
+        } else {
+            isCorrect = false
+        }
+          
         }
 }
 
