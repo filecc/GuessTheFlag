@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "Ukraine", "US"]
-    @State private var correctAnswer = Int.random(in: 0...2)
+    var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Spain", "UK", "US"]
+    @State private var correctAnswer = Int.random(in: 0 ... 2)
     @State private var isAlertVisible : Bool = false
     @State private var score : Int = 0
     @State private var tappedFlag : String = ""
     @State private var isCorrect : Bool = false
-    @State private var randomFlags : Array = [2, 5, 9]
+    @State private var randomFlags : Array = [1, 2, 3]
     
     var body: some View {
         ZStack {
             VStack(spacing: 30) {
+                Text("Your score: \(score)")
+                    .font(.title)
                 Text("Tap the flag of")
                     .foregroundStyle(.white)
                 Text(countries[correctAnswer])
@@ -38,7 +40,7 @@ struct ContentView: View {
                 
             }, message: {
                 VStack {
-                    isCorrect ?  Text("You're right! This is the flag of \(countries[correctAnswer])") :  Text("Nope! You tapped: \(tappedFlag).")
+                    isCorrect ?  Text("You're right! This is the flag of \(tappedFlag)") :  Text("Nope! You tapped: \(tappedFlag).")
                     
                    
                 }
@@ -53,18 +55,28 @@ struct ContentView: View {
         
     }
     func aFlagWasTapped(correctFlag: String) {
-        let countriesArrayLenght : Int = countries.count
-        let randomFlag1 = Int.random(in: 0 ..< countriesArrayLenght - 1)
-        let randomFlag2 = Int.random(in: 0 ..< countriesArrayLenght - 1)
-        let randomFlag3 = Int.random(in: 0 ..< countriesArrayLenght - 1)
-        let randomArray = [randomFlag1, randomFlag2, randomFlag3]
-        randomFlags = randomArray
-        correctAnswer = randomFlags[Int.random(in: 0 ..< 3)]
         if(correctFlag == tappedFlag){
             isCorrect = true
+            score += 1
         } else {
             isCorrect = false
+            score = 0
         }
+        let countriesArrayLenght : Int = countries.count
+        var otherFlags : Array<Int> = []
+        var counter : Int = 3
+        while (counter > 0) {
+            let randomFlag = Int.random(in: 0 ..< countriesArrayLenght)
+            if !otherFlags.contains(randomFlag){
+                otherFlags.append(randomFlag)
+                counter -= 1
+            }
+        }
+        print(otherFlags)
+        randomFlags = otherFlags
+
+        correctAnswer = otherFlags[Int.random(in: 0 ... 2)]
+        
           
         }
 }
